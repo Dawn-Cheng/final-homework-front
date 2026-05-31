@@ -1,11 +1,11 @@
 <template>
   <div class="phone-wrapper">
-    <div class="phone">
+    <div class="phone" :class="{ 'is-tablet': mode === 'tablet' }">
       <div class="phone-camera"></div>
       <div class="phone-screen">
         <!-- 状态栏图片：在 phone-screen 内部绝对定位 -->
         <!-- 超出圆角的部分会被 overflow:hidden 自动裁剪 -->
-        <img v-if="MOCK_STATUS_BAR" :src="MOCK_STATUS_BAR" class="phone-status-bar" alt="status bar" />
+        <img v-if="MOCK_STATUS_BAR && mode !== 'tablet'" :src="MOCK_STATUS_BAR" class="phone-status-bar" alt="status bar" />
         <slot />
       </div>
     </div>
@@ -14,12 +14,14 @@
 
 <script setup>
 import { MOCK_STATUS_BAR } from '@/config'
-/**
- * Phone.vue - 手机模拟框组件
- * 使用：<Phone><YourContent /></Phone>
- * 顶部状态栏图片通过 config.js 的 MOCK_STATUS_BAR 配置
- * 图片在 phone-screen 内部绝对定位，超出圆角部分被自动裁剪
- */
+
+defineProps({
+  mode: {
+    type: String,
+    default: 'phone',
+    validator: v => ['phone', 'tablet'].includes(v)
+  }
+})
 </script>
 
 <style scoped>
@@ -110,6 +112,44 @@ import { MOCK_STATUS_BAR } from '@/config'
   object-fit: cover;
   pointer-events: none;
   /* 不需要手动设 border-radius，父元素 overflow:hidden 会自动裁剪 */
+}
+
+/* ========== 平板模式 ========== */
+.phone.is-tablet {
+  width: 1260px;
+  height: 800px;
+  border-radius: 24px;
+  padding: 6px;
+  background: #1a1a1a;
+}
+
+/* 平板模式：始终居中 */
+.phone-wrapper:has(.is-tablet) {
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+
+.phone.is-tablet .phone-screen {
+  border-radius: 18px;
+  padding-top: 0;
+}
+
+.phone.is-tablet::before {
+  display: none;
+}
+
+.phone.is-tablet .phone-camera {
+  top: 12px;
+  width: 6px;
+  height: 6px;
+  background: #333;
+  box-shadow: 0 0 0 1px #000;
+}
+
+.phone.is-tablet .phone-screen {
+  border-radius: 20px;
+  padding-top: 0;
 }
 
 /* 移动端：去掉模拟框 */

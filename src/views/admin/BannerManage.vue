@@ -21,9 +21,9 @@
         <tbody>
           <tr v-for="b in list" :key="b.id">
             <td class="col-id">{{ b.id }}</td>
-            <td><img :src="b.image" class="thumb" /></td>
+            <td><img :src="b.imageUrl" class="thumb" /></td>
             <td>{{ b.title || '-' }}</td>
-            <td class="col-link">{{ b.link || '-' }}</td>
+            <td class="col-link">{{ b.linkUrl || '-' }}</td>
             <td>{{ b.sort }}</td>
             <td>
               <span :class="['tag', b.status === 1 ? 'tag-on' : 'tag-off']">
@@ -86,7 +86,7 @@ async function fetchList() {
 onMounted(fetchList)
 
 function openAdd() { editing.value = null; form.title = ''; form.image = ''; form.link = ''; form.sort = 0; form.status = 1; showModal.value = true }
-function openEdit(b) { editing.value = b; Object.assign(form, { title: b.title || '', image: b.image || '', link: b.link || '', sort: b.sort || 0, status: b.status }); showModal.value = true }
+function openEdit(b) { editing.value = b; Object.assign(form, { title: b.title || '', image: b.imageUrl || '', link: b.linkUrl || '', sort: b.sort || 0, status: b.status }); showModal.value = true }
 async function handleSave() {
   saving.value = true
   try {

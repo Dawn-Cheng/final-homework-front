@@ -22,9 +22,8 @@ const router = createRouter({
       path: '/admin',
       component: () => import('@/views/admin/AdminLayout.vue'),
       redirect: '/admin/dashboard',
-      meta: { admin: true },
+      meta: { admin: true, requiresAdmin: true },
       children: [
-        { path: 'login', component: () => import('@/views/admin/Login.vue'), meta: { admin: false } },
         { path: 'dashboard', component: () => import('@/views/admin/Dashboard.vue') },
         { path: 'goods', component: () => import('@/views/admin/GoodsManage.vue') },
         { path: 'categories', component: () => import('@/views/admin/CategoryManage.vue') },
@@ -32,6 +31,7 @@ const router = createRouter({
         { path: 'profile', component: () => import('@/views/admin/Profile.vue') },
       ],
     },
+    { path: '/admin/login', component: () => import('@/views/admin/Login.vue'), meta: { admin: false } },
     { path: '/', redirect: '/mall/home' },
   ],
 })
@@ -45,10 +45,9 @@ router.beforeEach((to, from, next) => {
     return next('/mall/login')
   }
 
-  // 后台页面
-  if (to.path.startsWith('/admin')) {
-    if (to.path === '/admin/login') return next()
-    if (!adminToken) return next('/admin/login')
+  // 后台页面：登录页放行，其他需要 admin token
+  if (to.meta.requiresAdmin && !adminToken) {
+    return next('/admin/login')
   }
 
   next()

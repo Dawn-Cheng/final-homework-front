@@ -67,21 +67,21 @@ function handleLogout() {
 
 <style scoped>
 .admin-layout {
-  min-height: 100vh;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  height: 100%;
+  background: #f0f2f5;
   display: flex;
   flex-direction: column;
 }
 
 /* 顶部栏 */
 .top-bar {
-  height: 56px;
+  height: 48px;
   background: #001529;
   color: #fff;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 24px;
+  padding: 0 20px;
   flex-shrink: 0;
 }
 .top-bar-left {
@@ -90,13 +90,12 @@ function handleLogout() {
   gap: 8px;
 }
 .brand {
-  font-size: 18px;
+  font-size: 16px;
   font-weight: 700;
-  letter-spacing: 1px;
 }
 .breadcrumb {
-  font-size: 13px;
-  color: rgba(255,255,255,.5);
+  font-size: 12px;
+  color: rgba(255,255,255,.4);
 }
 .top-bar-right {
   display: flex;
@@ -104,24 +103,24 @@ function handleLogout() {
   gap: 10px;
 }
 .user-avatar {
-  width: 32px;
-  height: 32px;
+  width: 28px;
+  height: 28px;
   border-radius: 50%;
   background: #1890ff;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 14px;
+  font-size: 12px;
   font-weight: 600;
 }
 .user-name {
-  font-size: 14px;
+  font-size: 13px;
   color: rgba(255,255,255,.85);
 }
 .logout-link {
   background: none;
   border: none;
-  color: rgba(255,255,255,.5);
+  color: rgba(255,255,255,.4);
   font-size: 13px;
   cursor: pointer;
   padding: 4px 8px;
@@ -134,12 +133,12 @@ function handleLogout() {
 .admin-body {
   display: flex;
   flex: 1;
-  height: calc(100vh - 56px);
+  overflow: hidden;
 }
 
 /* 侧边栏 */
 .sidebar {
-  width: 220px;
+  width: 180px;
   background: #001529;
   flex-shrink: 0;
   overflow-y: auto;
@@ -148,22 +147,22 @@ function handleLogout() {
 nav {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 0;
 }
 .nav-item {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 14px 24px;
-  color: rgba(255,255,255,.65);
-  font-size: 14px;
+  gap: 8px;
+  padding: 12px 20px;
+  color: rgba(255,255,255,.6);
+  font-size: 13px;
   text-decoration: none;
   transition: all .2s;
   border-left: 3px solid transparent;
 }
 .nav-icon {
-  font-size: 16px;
-  width: 20px;
+  font-size: 14px;
+  width: 18px;
   text-align: center;
 }
 .nav-item:hover {
@@ -179,10 +178,8 @@ nav {
 /* 主内容 */
 .main-content {
   flex: 1;
-  padding: 24px;
+  padding: 16px;
   overflow-y: auto;
   background: #f0f2f5;
-  border-radius: 8px;
-  margin: 16px 16px 16px 0;
 }
 </style>
