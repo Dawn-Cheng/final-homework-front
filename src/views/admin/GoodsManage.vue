@@ -5,6 +5,17 @@
       <button class="btn-primary" @click="openAdd">+ 新增商品</button>
     </div>
 
+    <!-- 筛选栏 -->
+    <div class="filter-bar">
+      <select v-model.number="filters.categoryId" class="filter-select">
+        <option :value="0">全部分类</option>
+        <option v-for="c in categories" :key="c.id" :value="c.id">{{ c.name }}</option>
+      </select>
+      <input v-model="filters.keyword" class="filter-input" placeholder="搜索商品名称" @keyup.enter="handleSearch" />
+      <button class="btn-search" @click="handleSearch">查询</button>
+      <button class="btn-reset" @click="handleReset">重置</button>
+    </div>
+
     <div class="table-wrap">
       <table class="data-table">
         <thead>
@@ -30,6 +41,13 @@
           </tr>
         </tbody>
       </table>
+      <!-- 分页 -->
+      <div class="pagination" v-if="list.length">
+        <span class="total-info">共 {{ totalItems }} 条</span>
+        <button :disabled="page <= 1" @click="handlePageChange(page - 1)">上一页</button>
+        <span class="page-info">{{ page }} / {{ totalPages }}</span>
+        <button :disabled="page >= totalPages" @click="handlePageChange(page + 1)">下一页</button>
+      </div>
       <div v-if="!list.length" class="empty-tip">暂无商品数据</div>
     </div>
 
@@ -65,6 +83,10 @@
             <div class="form-group"><label>描述</label><textarea v-model="form.description" rows="2"></textarea></div>
             <div class="form-group"><label>详情（HTML）</label><textarea v-model="form.detail" rows="4"></textarea></div>
           </div>
+          <div class="form-row">
+            <div class="form-group"><label>规格（JSON）</label><textarea v-model="form.specs" rows="2" placeholder='如 ["颜色:红","尺码:L"]'></textarea></div>
+            <div class="form-group"><label>图片列表（JSON）</label><textarea v-model="form.images" rows="2" placeholder='如 ["url1.jpg","url2.jpg"]'></textarea></div>
+          </div>
         </div>
         <div class="modal-footer">
           <button class="btn-cancel" @click="showModal = false">取消</button>
@@ -76,31 +98,42 @@
 </template>
 
 <script setup>
-import { ref, reactive, onMounted } from 'vue'
+import { ref, reactive, computed, onMounted } from 'vue'
 import { getAdminGoods, createGoods, updateGoods, deleteGoods } from '@/api/goods'
 import { getAdminCategories } from '@/api/category'
 import { showToast } from '@/utils'
 
 const list = ref([])
 const categories = ref([])
+
+// 筛选与分页
+const filters = reactive({ categoryId: 0, keyword: '' })
+const page = ref(1)
+const pageSize = ref(10)
+const totalItems = ref(0)
+const totalPages = computed(() => Math.ceil(totalItems.value / pageSize.value) || 1)
 const showModal = ref(false)
 const editing = ref(null)
 const saving = ref(false)
 const form = reactive({
   name: '', categoryId: 0, price: 0, originalPrice: 0,
-  stock: 0, status: 1, description: '', detail: '', coverImage: '',
+  stock: 0, status: 1, description: '', detail: '', coverImage: '', specs: '', images: '',
 })
 
 async function fetchList() {
-  try { const res = await getAdminGoods(); list.value = res.data?.list || [] } catch { list.value = [] }
+  try { const res = await getAdminGoods({ categoryId: filters.categoryId || undefined, keyword: filters.keyword || undefined, page: page.value, pageSize: pageSize.value }); list.value = res.data?.list || []; totalItems.value = res.data?.total || 0 } catch { list.value = [] }
 }
 async function fetchCategories() {
   try { const res = await getAdminCategories(); categories.value = res.data || [] } catch { categories.value = [] }
 }
 onMounted(() => { fetchList(); fetchCategories() })
 
+function handleSearch() { page.value = 1; fetchList() }
+function handleReset() { filters.categoryId = 0; filters.keyword = ''; page.value = 1; fetchList() }
+function handlePageChange(p) { page.value = p; fetchList() }
+
 function resetForm() {
-  Object.assign(form, { name: '', categoryId: 0, price: 0, originalPrice: 0, stock: 0, status: 1, description: '', detail: '', coverImage: '' })
+  Object.assign(form, { name: '', categoryId: 0, price: 0, originalPrice: 0, stock: 0, status: 1, description: '', detail: '', coverImage: '', specs: '', images: '' })
 }
 function openAdd() { editing.value = null; resetForm(); showModal.value = true }
 function openEdit(g) {
@@ -108,7 +141,7 @@ function openEdit(g) {
   Object.assign(form, {
     name: g.name, categoryId: g.categoryId || 0, price: g.price,
     originalPrice: g.originalPrice || 0, stock: g.stock || 0,
-    status: g.status, description: g.description || '', detail: g.detail || '', coverImage: g.coverImage || '',
+    status: g.status, description: g.description || '', detail: g.detail || '', coverImage: g.coverImage || '', specs: g.specs || '', images: g.images || '',
   })
   showModal.value = true
 }
@@ -196,4 +229,24 @@ async function handleDelete(g) {
   border-radius: 6px; font-size: 14px; cursor: pointer;
 }
 .btn-cancel:hover { color: #1890ff; border-color: #1890ff; }
+
+/* 筛选栏 */
+.filter-bar { display: flex; gap: 12px; align-items: center; margin-bottom: 16px; padding: 12px 16px; background: #fafafa; border-radius: 6px; }
+.filter-select, .filter-input { padding: 7px 12px; border: 1px solid #e0e0e0; border-radius: 6px; font-size: 14px; background: #fff; }
+.filter-select { min-width: 150px; }
+.filter-input { width: 200px; }
+.filter-select:focus, .filter-input:focus { border-color: #1890ff; outline: none; }
+.btn-search, .btn-reset { padding: 7px 16px; border: 1px solid #e0e0e0; border-radius: 6px; font-size: 13px; cursor: pointer; transition: all .2s; }
+.btn-search { background: #1890ff; color: #fff; border-color: #1890ff; }
+.btn-search:hover { background: #096dd9; }
+.btn-reset { background: #fff; color: #666; }
+.btn-reset:hover { color: #1890ff; border-color: #1890ff; }
+
+/* 分页 */
+.pagination { display: flex; justify-content: center; gap: 12px; align-items: center; margin-top: 20px; }
+.pagination button { padding: 6px 16px; border: 1px solid #e0e0e0; border-radius: 6px; background: #fff; font-size: 13px; cursor: pointer; transition: all .2s; }
+.pagination button:hover:not(:disabled) { color: #1890ff; border-color: #1890ff; }
+.pagination button:disabled { opacity: .5; cursor: not-allowed; }
+.total-info { color: #999; font-size: 13px; }
+.page-info { font-size: 14px; color: #333; font-weight: 500; }
 </style>
