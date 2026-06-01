@@ -28,6 +28,7 @@ const router = createRouter({
         { path: 'goods', component: () => import('@/views/admin/GoodsManage.vue') },
         { path: 'categories', component: () => import('@/views/admin/CategoryManage.vue') },
         { path: 'banners', component: () => import('@/views/admin/BannerManage.vue') },
+        { path: 'orders', component: () => import('@/views/admin/OrderManage.vue') },
         { path: 'profile', component: () => import('@/views/admin/Profile.vue') },
       ],
     },

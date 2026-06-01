@@ -55,7 +55,7 @@
 
 <script setup>
 import { ref, reactive, onMounted } from 'vue'
-import adminHttp from '@/api/admin-index'
+import { getAdminCategories, createCategory, updateCategory, deleteCategory } from '@/api/category'
 import { showToast } from '@/utils'
 
 const list = ref([])
@@ -67,7 +67,7 @@ const form = reactive({ name: '', parentId: 0, sort: 0 })
 
 async function fetchList() {
   try {
-    const res = await adminHttp.get('/api/admin/categories')
+    const res = await getAdminCategories()
     list.value = res.data || []
     parentOpts.value = list.value.filter((c) => !c.parentId)
   } catch { list.value = [] }
@@ -86,16 +86,16 @@ async function handleSave() {
     const data = { name: form.name, sort: form.sort }
     if (form.parentId) data.parentId = form.parentId
     if (editing.value) {
-      await adminHttp.put(`/api/admin/categories/${editing.value.id}`, data)
+      await updateCategory(editing.value.id, data)
     } else {
-      await adminHttp.post('/api/admin/categories', data)
+      await createCategory(data)
     }
     showToast('保存成功'); showModal.value = false; fetchList()
   } catch (e) { showToast(e.message || '保存失败') } finally { saving.value = false }
 }
 async function handleDelete(cat) {
   if (!confirm(`确定删除「${cat.name}」？`)) return
-  try { await adminHttp.delete(`/api/admin/categories/${cat.id}`); showToast('已删除'); fetchList() } catch (e) { showToast(e.message) }
+  try { await deleteCategory(cat.id); showToast('已删除'); fetchList() } catch (e) { showToast(e.message) }
 }
 </script>
 

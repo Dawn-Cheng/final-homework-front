@@ -28,6 +28,9 @@
           <router-link to="/admin/banners" class="nav-item">
             <span class="nav-icon">▥</span>轮播图管理
           </router-link>
+          <router-link to="/admin/orders" class="nav-item">
+            <span class="nav-icon">📋</span>订单管理
+          </router-link>
           <router-link to="/admin/profile" class="nav-item">
             <span class="nav-icon">◎</span>个人中心
           </router-link>
@@ -54,6 +57,7 @@ const pageTitle = computed(() => {
     categories: '分类管理',
     goods: '商品管理',
     banners: '轮播图管理',
+    orders: '订单管理',
     profile: '个人中心',
   }
   return map[route.path.split('/').pop()] || ''

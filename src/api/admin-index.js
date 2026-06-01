@@ -28,4 +28,10 @@ adminHttp.interceptors.response.use(
   (err) => Promise.reject(err)
 )
 
+export const getDashboardStats = () =>
+  adminHttp.get('/api/admin/dashboard/stats')
+
+export const aiAnalyze = (message) =>
+  adminHttp.post('/api/admin/ai/analyze', { message })
+
 export default adminHttp

@@ -26,7 +26,7 @@
 
 <script setup>
 import { ref, reactive, onMounted } from 'vue'
-import adminHttp from '@/api/admin-index'
+import { getAdminProfile, updateAdminProfile, changePassword } from '@/api/user'
 import { showToast } from '@/utils'
 
 const profile = ref({})
@@ -37,7 +37,7 @@ const pwdSaving = ref(false)
 
 onMounted(async () => {
   try {
-    const res = await adminHttp.get('/api/admin/profile')
+    const res = await getAdminProfile()
     profile.value = res.data
     form.phone = res.data.phone || ''
     form.avatar = res.data.avatar || ''
@@ -46,7 +46,7 @@ onMounted(async () => {
 
 async function handleSaveProfile() {
   saving.value = true
-  try { await adminHttp.put('/api/admin/profile', { phone: form.phone, avatar: form.avatar }); showToast('保存成功') }
+  try { await updateAdminProfile({ phone: form.phone, avatar: form.avatar }); showToast('保存成功') }
   catch (e) { showToast(e.message || '保存失败') } finally { saving.value = false }
 }
 
@@ -55,7 +55,7 @@ async function handleChangePwd() {
   if (pwd.new1 !== pwd.new2) { showToast('两次新密码不一致'); return }
   pwdSaving.value = true
   try {
-    await adminHttp.put('/api/admin/password', { oldPassword: pwd.old, newPassword: pwd.new1 })
+    await changePassword(pwd.old, pwd.new1)
     showToast('密码修改成功')
     pwd.old = ''; pwd.new1 = ''; pwd.new2 = ''
   } catch (e) { showToast(e.message || '修改失败') } finally { pwdSaving.value = false }

@@ -11,7 +11,6 @@
           <tr>
             <th>ID</th>
             <th>图片</th>
-            <th>标题</th>
             <th>跳转链接</th>
             <th>排序</th>
             <th>状态</th>
@@ -22,7 +21,6 @@
           <tr v-for="b in list" :key="b.id">
             <td class="col-id">{{ b.id }}</td>
             <td><img :src="b.imageUrl" class="thumb" /></td>
-            <td>{{ b.title || '-' }}</td>
             <td class="col-link">{{ b.linkUrl || '-' }}</td>
             <td>{{ b.sort }}</td>
             <td>
@@ -48,7 +46,6 @@
         </div>
         <div class="modal-body">
           <div class="form-row">
-            <div class="form-group flex-2"><label>标题</label><input v-model="form.title" /></div>
             <div class="form-group"><label>排序</label><input v-model.number="form.sort" type="number" /></div>
             <div class="form-group"><label>状态</label>
               <select v-model="form.status">
@@ -57,8 +54,8 @@
               </select>
             </div>
           </div>
-          <div class="form-group"><label>图片 URL</label><input v-model="form.image" /></div>
-          <div class="form-group"><label>跳转链接</label><input v-model="form.link" placeholder="如 /goods/1" /></div>
+          <div class="form-group"><label>图片 URL</label><input v-model="form.imageUrl" /></div>
+          <div class="form-group"><label>跳转链接</label><input v-model="form.linkUrl" placeholder="如 /goods/1" /></div>
         </div>
         <div class="modal-footer">
           <button class="btn-cancel" @click="showModal = false">取消</button>
@@ -71,33 +68,33 @@
 
 <script setup>
 import { ref, reactive, onMounted } from 'vue'
-import adminHttp from '@/api/admin-index'
+import { getAdminBanners, createBanner, updateBanner, deleteBanner } from '@/api/banner'
 import { showToast } from '@/utils'
 
 const list = ref([])
 const showModal = ref(false)
 const editing = ref(null)
 const saving = ref(false)
-const form = reactive({ title: '', image: '', link: '', sort: 0, status: 1 })
+const form = reactive({ imageUrl: '', linkUrl: '', sort: 0, status: 1 })
 
 async function fetchList() {
-  try { const res = await adminHttp.get('/api/admin/banners'); list.value = res.data || [] } catch { list.value = [] }
+  try { const res = await getAdminBanners(); list.value = res.data || [] } catch { list.value = [] }
 }
 onMounted(fetchList)
 
-function openAdd() { editing.value = null; form.title = ''; form.image = ''; form.link = ''; form.sort = 0; form.status = 1; showModal.value = true }
-function openEdit(b) { editing.value = b; Object.assign(form, { title: b.title || '', image: b.imageUrl || '', link: b.linkUrl || '', sort: b.sort || 0, status: b.status }); showModal.value = true }
+function openAdd() { editing.value = null; form.imageUrl = ''; form.linkUrl = ''; form.sort = 0; form.status = 1; showModal.value = true }
+function openEdit(b) { editing.value = b; Object.assign(form, { imageUrl: b.imageUrl || '', linkUrl: b.linkUrl || '', sort: b.sort || 0, status: b.status }); showModal.value = true }
 async function handleSave() {
   saving.value = true
   try {
-    if (editing.value) { await adminHttp.put(`/api/admin/banners/${editing.value.id}`, form) }
-    else { await adminHttp.post('/api/admin/banners', form) }
+    if (editing.value) { await updateBanner(editing.value.id, form) }
+    else { await createBanner(form) }
     showToast('保存成功'); showModal.value = false; fetchList()
   } catch (e) { showToast(e.message || '保存失败') } finally { saving.value = false }
 }
 async function handleDelete(b) {
   if (!confirm('确定删除这条轮播图？')) return
-  try { await adminHttp.delete(`/api/admin/banners/${b.id}`); showToast('已删除'); fetchList() } catch (e) { showToast(e.message) }
+  try { await deleteBanner(b.id); showToast('已删除'); fetchList() } catch (e) { showToast(e.message) }
 }
 </script>
 

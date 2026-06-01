@@ -9,12 +9,12 @@
     <!-- 轮播图 -->
     <div class="banner-wrap" v-if="banners.length">
       <div class="banner-track" :style="{ transform: `translateX(-${current * 100}%)` }">
-        <div v-for="(img, i) in banners" :key="i" class="banner-slide">
-          <img :src="img" alt="banner" />
+        <div v-for="(b, i) in banners" :key="b.id" class="banner-slide" @click="handleBannerClick(b)">
+          <img :src="b.imageUrl" alt="banner" />
         </div>
       </div>
       <div class="banner-dots">
-        <span v-for="(b, i) in banners" :key="i" class="dot" :class="{ active: i === current }" />
+        <span v-for="(b, i) in banners" :key="b.id" class="dot" :class="{ active: i === current }" />
       </div>
     </div>
 
@@ -67,9 +67,11 @@
 
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue'
+import { useRouter } from 'vue-router'
 import { getBanners } from '@/api/banner'
 import { getGoodsList } from '@/api/goods'
 
+const router = useRouter()
 const banners = ref([])
 const current = ref(0)
 const goods = ref([])
@@ -84,12 +86,15 @@ const features = [
 
 let timer = null
 
+function handleBannerClick(b) {
+  if (!b.linkUrl) return
+  router.push(b.linkUrl.startsWith('/') ? `/mall${b.linkUrl}` : b.linkUrl)
+}
+
 onMounted(async () => {
   try {
     const res = await getBanners()
-    banners.value = (res.data || [])
-      .filter(b => b.status === 1)
-      .map(b => b.imageUrl)
+    banners.value = (res.data || []).filter(b => b.status === 1)
   } catch { banners.value = [] }
 
   if (banners.value.length > 1) {

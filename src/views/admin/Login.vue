@@ -25,7 +25,7 @@
 <script setup>
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
-import adminHttp from '@/api/admin-index'
+import { adminLogin } from '@/api/user'
 
 const router = useRouter()
 const username = ref('admin')
@@ -38,7 +38,7 @@ async function handleLogin() {
   error.value = ''
   loading.value = true
   try {
-    const res = await adminHttp.post('/api/admin/login', { username: username.value, password: password.value })
+    const res = await adminLogin(username.value, password.value)
     localStorage.setItem('adminToken', res.data.token)
     router.push('/admin/dashboard')
   } catch (e) { error.value = e.message || '登录失败' } finally { loading.value = false }
