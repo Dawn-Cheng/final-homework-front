@@ -19,7 +19,16 @@
     <div class="table-wrap">
       <table class="data-table">
         <thead>
-          <tr><th>ID</th><th>封面</th><th>名称</th><th>分类</th><th>价格</th><th>库存</th><th>状态</th><th>操作</th></tr>
+          <tr>
+            <th>ID</th>
+            <th>封面</th>
+            <th>名称</th>
+            <th>分类</th>
+            <th>价格</th>
+            <th>库存</th>
+            <th>状态</th>
+            <th>操作</th>
+          </tr>
         </thead>
         <tbody>
           <tr v-for="g in list" :key="g.id">
@@ -69,11 +78,16 @@
             </div>
           </div>
           <div class="form-row">
-            <div class="form-group"><label>价格</label><input v-model.number="form.price" type="number" step="0.01" /></div>
-            <div class="form-group"><label>原价</label><input v-model.number="form.originalPrice" type="number" step="0.01" /></div>
+            <div class="form-group"><label>价格</label><input v-model.number="form.price" type="number" step="0.01" />
+            </div>
+            <div class="form-group"><label>原价</label><input v-model.number="form.originalPrice" type="number"
+                step="0.01" /></div>
             <div class="form-group"><label>库存</label><input v-model.number="form.stock" type="number" /></div>
             <div class="form-group"><label>状态</label>
-              <select v-model="form.status"><option :value="1">上架</option><option :value="0">下架</option></select>
+              <select v-model="form.status">
+                <option :value="1">上架</option>
+                <option :value="0">下架</option>
+              </select>
             </div>
           </div>
           <div class="form-row">
@@ -84,8 +98,10 @@
             <div class="form-group"><label>详情（HTML）</label><textarea v-model="form.detail" rows="4"></textarea></div>
           </div>
           <div class="form-row">
-            <div class="form-group"><label>规格（JSON）</label><textarea v-model="form.specs" rows="2" placeholder='如 ["颜色:红","尺码:L"]'></textarea></div>
-            <div class="form-group"><label>图片列表（JSON）</label><textarea v-model="form.images" rows="2" placeholder='如 ["url1.jpg","url2.jpg"]'></textarea></div>
+            <div class="form-group"><label>规格（JSON）</label><textarea v-model="form.specs" rows="2"
+                placeholder='如 ["颜色:红","尺码:L"]'></textarea></div>
+            <div class="form-group"><label>图片列表（JSON）</label><textarea v-model="form.images" rows="2"
+                placeholder='如 ["url1.jpg","url2.jpg"]'></textarea></div>
           </div>
         </div>
         <div class="modal-footer">
@@ -117,7 +133,7 @@ const editing = ref(null)
 const saving = ref(false)
 const form = reactive({
   name: '', categoryId: 0, price: 0, originalPrice: 0,
-  stock: 0, status: 1, description: '', detail: '', coverImage: '', specs: '', images: '',
+  stock: 0, status: 1, description: '', detail: '', coverImage: '', specs: '', images: '[]',
 })
 
 async function fetchList() {
@@ -133,7 +149,7 @@ function handleReset() { filters.categoryId = 0; filters.keyword = ''; page.valu
 function handlePageChange(p) { page.value = p; fetchList() }
 
 function resetForm() {
-  Object.assign(form, { name: '', categoryId: 0, price: 0, originalPrice: 0, stock: 0, status: 1, description: '', detail: '', coverImage: '', specs: '', images: '' })
+  Object.assign(form, { name: '', categoryId: 0, price: 0, originalPrice: 0, stock: 0, status: 1, description: '', detail: '', coverImage: '', specs: '', images: '[]' })
 }
 function openAdd() { editing.value = null; resetForm(); showModal.value = true }
 function openEdit(g) {
@@ -141,7 +157,7 @@ function openEdit(g) {
   Object.assign(form, {
     name: g.name, categoryId: g.categoryId || 0, price: g.price,
     originalPrice: g.originalPrice || 0, stock: g.stock || 0,
-    status: g.status, description: g.description || '', detail: g.detail || '', coverImage: g.coverImage || '', specs: g.specs || '', images: g.images || '',
+    status: g.status, description: g.description || '', detail: g.detail || '', coverImage: g.coverImage || '', specs: g.specs || '', images: g.images || '[]',
   })
   showModal.value = true
 }
@@ -163,90 +179,390 @@ async function handleDelete(g) {
 </script>
 
 <style scoped>
-.manage-page { background: #fff; border-radius: 8px; padding: 24px; box-shadow: 0 1px 3px rgba(0,0,0,.06); }
-.page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-.page-header h2 { font-size: 18px; font-weight: 600; color: #1a1a2e; }
+.manage-page {
+  background: #fff;
+  border-radius: 8px;
+  padding: 24px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, .06);
+}
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.page-header h2 {
+  font-size: 18px;
+  font-weight: 600;
+  color: #1a1a2e;
+}
 
 .btn-primary {
-  padding: 8px 22px; background: #1890ff; color: #fff; border: none; border-radius: 6px;
-  font-size: 14px; cursor: pointer; transition: background .2s;
+  padding: 8px 22px;
+  background: #1890ff;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background .2s;
 }
-.btn-primary:hover { background: #096dd9; }
-.btn-primary:disabled { opacity: .6; cursor: not-allowed; }
 
-.table-wrap { overflow-x: auto; }
-.data-table { width: 100%; border-collapse: collapse; }
-.data-table th, .data-table td { padding: 14px 16px; text-align: left; border-bottom: 1px solid #f0f0f0; font-size: 14px; }
-.data-table th { background: #fafafa; color: #666; font-weight: 500; font-size: 13px; white-space: nowrap; }
-.data-table tbody tr:hover { background: #fafafa; }
-.col-id { color: #999; width: 60px; }
-.col-name { max-width: 180px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.col-price { color: #e74c3c; font-weight: 600; }
-.col-action { white-space: nowrap; }
-.thumb { width: 52px; height: 52px; border-radius: 6px; object-fit: cover; background: #f5f5f5; }
-
-.tag { display: inline-block; padding: 2px 10px; border-radius: 4px; font-size: 12px; }
-.tag-on { background: #f6ffed; color: #52c41a; border: 1px solid #b7eb8f; }
-.tag-off { background: #f5f5f5; color: #999; border: 1px solid #e0e0e0; }
-
-.btn-edit, .btn-del {
-  padding: 4px 14px; border: 1px solid #e0e0e0; border-radius: 4px; font-size: 13px;
-  cursor: pointer; background: #fff; transition: all .2s;
+.btn-primary:hover {
+  background: #096dd9;
 }
-.btn-edit { color: #1890ff; margin-right: 8px; }
-.btn-edit:hover { color: #fff; background: #1890ff; border-color: #1890ff; }
-.btn-del { color: #e74c3c; }
-.btn-del:hover { color: #fff; background: #e74c3c; border-color: #e74c3c; }
 
-.empty-tip { text-align: center; padding: 60px 0; color: #999; font-size: 14px; }
+.btn-primary:disabled {
+  opacity: .6;
+  cursor: not-allowed;
+}
+
+.table-wrap {
+  overflow-x: auto;
+}
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.data-table th,
+.data-table td {
+  padding: 14px 16px;
+  text-align: left;
+  border-bottom: 1px solid #f0f0f0;
+  font-size: 14px;
+}
+
+.data-table th {
+  background: #fafafa;
+  color: #666;
+  font-weight: 500;
+  font-size: 13px;
+  white-space: nowrap;
+}
+
+.data-table tbody tr:hover {
+  background: #fafafa;
+}
+
+.col-id {
+  color: #999;
+  width: 60px;
+}
+
+.col-name {
+  max-width: 180px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.col-price {
+  color: #e74c3c;
+  font-weight: 600;
+}
+
+.col-action {
+  white-space: nowrap;
+}
+
+.thumb {
+  width: 52px;
+  height: 52px;
+  border-radius: 6px;
+  object-fit: cover;
+  background: #f5f5f5;
+}
+
+.tag {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: 4px;
+  font-size: 12px;
+}
+
+.tag-on {
+  background: #f6ffed;
+  color: #52c41a;
+  border: 1px solid #b7eb8f;
+}
+
+.tag-off {
+  background: #f5f5f5;
+  color: #999;
+  border: 1px solid #e0e0e0;
+}
+
+.btn-edit,
+.btn-del {
+  padding: 4px 14px;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  font-size: 13px;
+  cursor: pointer;
+  background: #fff;
+  transition: all .2s;
+}
+
+.btn-edit {
+  color: #1890ff;
+  margin-right: 8px;
+}
+
+.btn-edit:hover {
+  color: #fff;
+  background: #1890ff;
+  border-color: #1890ff;
+}
+
+.btn-del {
+  color: #e74c3c;
+}
+
+.btn-del:hover {
+  color: #fff;
+  background: #e74c3c;
+  border-color: #e74c3c;
+}
+
+.empty-tip {
+  text-align: center;
+  padding: 60px 0;
+  color: #999;
+  font-size: 14px;
+}
 
 /* 弹窗 */
-.modal-mask { position: fixed; inset: 0; background: rgba(0,0,0,.35); z-index: 300; display: flex; align-items: center; justify-content: center; }
-.modal-card { background: #fff; border-radius: 8px; width: 680px; max-height: 85vh; display: flex; flex-direction: column; box-shadow: 0 8px 40px rgba(0,0,0,.15); }
-.modal-header { display: flex; justify-content: space-between; align-items: center; padding: 20px 24px; border-bottom: 1px solid #f0f0f0; }
-.modal-header h3 { font-size: 16px; font-weight: 600; }
-.modal-close { background: none; border: none; font-size: 22px; color: #999; cursor: pointer; padding: 0 4px; }
-.modal-close:hover { color: #333; }
-.modal-body { padding: 24px; overflow-y: auto; flex: 1; }
-.modal-footer { padding: 16px 24px; border-top: 1px solid #f0f0f0; display: flex; justify-content: flex-end; gap: 12px; }
+.modal-mask {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, .35);
+  z-index: 300;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
 
-.form-row { display: flex; gap: 16px; margin-bottom: 16px; }
-.form-row .form-group { flex: 1; }
-.form-group.flex-2 { flex: 2; }
-.form-group { margin-bottom: 0; }
-.form-group label { display: block; font-size: 13px; color: #555; margin-bottom: 6px; font-weight: 500; }
-.form-group input, .form-group select, .form-group textarea {
-  width: 100%; padding: 9px 12px; border: 1px solid #e0e0e0; border-radius: 6px;
-  font-size: 14px; transition: border-color .2s; background: #fff;
+.modal-card {
+  background: #fff;
+  border-radius: 8px;
+  width: 680px;
+  max-height: 85vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 8px 40px rgba(0, 0, 0, .15);
 }
-.form-group input:focus, .form-group select:focus, .form-group textarea:focus {
-  border-color: #1890ff; box-shadow: 0 0 0 2px rgba(24,144,255,.1); outline: none;
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 24px;
+  border-bottom: 1px solid #f0f0f0;
 }
-.form-group textarea { resize: vertical; font-family: inherit; }
+
+.modal-header h3 {
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.modal-close {
+  background: none;
+  border: none;
+  font-size: 22px;
+  color: #999;
+  cursor: pointer;
+  padding: 0 4px;
+}
+
+.modal-close:hover {
+  color: #333;
+}
+
+.modal-body {
+  padding: 24px;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.modal-footer {
+  padding: 16px 24px;
+  border-top: 1px solid #f0f0f0;
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+.form-row {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.form-row .form-group {
+  flex: 1;
+}
+
+.form-group.flex-2 {
+  flex: 2;
+}
+
+.form-group {
+  margin-bottom: 0;
+}
+
+.form-group label {
+  display: block;
+  font-size: 13px;
+  color: #555;
+  margin-bottom: 6px;
+  font-weight: 500;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+  width: 100%;
+  padding: 9px 12px;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  font-size: 14px;
+  transition: border-color .2s;
+  background: #fff;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+  border-color: #1890ff;
+  box-shadow: 0 0 0 2px rgba(24, 144, 255, .1);
+  outline: none;
+}
+
+.form-group textarea {
+  resize: vertical;
+  font-family: inherit;
+}
 
 .btn-cancel {
-  padding: 8px 22px; background: #fff; color: #666; border: 1px solid #e0e0e0;
-  border-radius: 6px; font-size: 14px; cursor: pointer;
+  padding: 8px 22px;
+  background: #fff;
+  color: #666;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  font-size: 14px;
+  cursor: pointer;
 }
-.btn-cancel:hover { color: #1890ff; border-color: #1890ff; }
+
+.btn-cancel:hover {
+  color: #1890ff;
+  border-color: #1890ff;
+}
 
 /* 筛选栏 */
-.filter-bar { display: flex; gap: 12px; align-items: center; margin-bottom: 16px; padding: 12px 16px; background: #fafafa; border-radius: 6px; }
-.filter-select, .filter-input { padding: 7px 12px; border: 1px solid #e0e0e0; border-radius: 6px; font-size: 14px; background: #fff; }
-.filter-select { min-width: 150px; }
-.filter-input { width: 200px; }
-.filter-select:focus, .filter-input:focus { border-color: #1890ff; outline: none; }
-.btn-search, .btn-reset { padding: 7px 16px; border: 1px solid #e0e0e0; border-radius: 6px; font-size: 13px; cursor: pointer; transition: all .2s; }
-.btn-search { background: #1890ff; color: #fff; border-color: #1890ff; }
-.btn-search:hover { background: #096dd9; }
-.btn-reset { background: #fff; color: #666; }
-.btn-reset:hover { color: #1890ff; border-color: #1890ff; }
+.filter-bar {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  margin-bottom: 16px;
+  padding: 12px 16px;
+  background: #fafafa;
+  border-radius: 6px;
+}
+
+.filter-select,
+.filter-input {
+  padding: 7px 12px;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  font-size: 14px;
+  background: #fff;
+}
+
+.filter-select {
+  min-width: 150px;
+}
+
+.filter-input {
+  width: 200px;
+}
+
+.filter-select:focus,
+.filter-input:focus {
+  border-color: #1890ff;
+  outline: none;
+}
+
+.btn-search,
+.btn-reset {
+  padding: 7px 16px;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all .2s;
+}
+
+.btn-search {
+  background: #1890ff;
+  color: #fff;
+  border-color: #1890ff;
+}
+
+.btn-search:hover {
+  background: #096dd9;
+}
+
+.btn-reset {
+  background: #fff;
+  color: #666;
+}
+
+.btn-reset:hover {
+  color: #1890ff;
+  border-color: #1890ff;
+}
 
 /* 分页 */
-.pagination { display: flex; justify-content: center; gap: 12px; align-items: center; margin-top: 20px; }
-.pagination button { padding: 6px 16px; border: 1px solid #e0e0e0; border-radius: 6px; background: #fff; font-size: 13px; cursor: pointer; transition: all .2s; }
-.pagination button:hover:not(:disabled) { color: #1890ff; border-color: #1890ff; }
-.pagination button:disabled { opacity: .5; cursor: not-allowed; }
-.total-info { color: #999; font-size: 13px; }
-.page-info { font-size: 14px; color: #333; font-weight: 500; }
+.pagination {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  align-items: center;
+  margin-top: 20px;
+}
+
+.pagination button {
+  padding: 6px 16px;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  background: #fff;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all .2s;
+}
+
+.pagination button:hover:not(:disabled) {
+  color: #1890ff;
+  border-color: #1890ff;
+}
+
+.pagination button:disabled {
+  opacity: .5;
+  cursor: not-allowed;
+}
+
+.total-info {
+  color: #999;
+  font-size: 13px;
+}
+
+.page-info {
+  font-size: 14px;
+  color: #333;
+  font-weight: 500;
+}
 </style>

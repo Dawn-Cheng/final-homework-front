@@ -1,12 +1,10 @@
 <template>
   <div class="home">
-    <!-- 搜索栏 -->
     <div class="search-bar" @click="$router.push('/mall/category')">
       <img src="/搜索.png" class="search-icon-img" />
       <span class="search-text">搜索商品、品牌</span>
     </div>
 
-    <!-- 轮播图 -->
     <div class="banner-wrap" v-if="banners.length">
       <div class="banner-track" :style="{ transform: `translateX(-${current * 100}%)` }">
         <div v-for="(b, i) in banners" :key="b.id" class="banner-slide" @click="handleBannerClick(b)">
@@ -18,7 +16,6 @@
       </div>
     </div>
 
-    <!-- 功能入口（图片直接写死路径，不用插值） -->
     <div class="feature-grid">
       <div v-for="f in features" :key="f.label" class="feature-item"
         @click="$router.push({ path: '/mall/category', query: { keyword: f.kw } })">
@@ -27,7 +24,6 @@
       </div>
     </div>
 
-    <!-- 推荐商品 -->
     <div class="section" v-if="goods.length">
       <div class="section-header">
         <span class="section-title">为你推荐</span>
@@ -49,7 +45,6 @@
       </div>
     </div>
 
-    <!-- 骨架屏 -->
     <div class="section skeleton-section" v-if="!goods.length">
       <div class="section-header">
         <span class="section-title">为你推荐</span>
