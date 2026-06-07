@@ -14,13 +14,13 @@
         </div>
         <div class="order-body" v-if="order.items && order.items.length">
           <div v-for="item in order.items" :key="item.id" class="order-item">
-            <img :src="item.goodsImage" />
+            <img :src="item.goodsCover" />
             <div class="item-text">
               <p>{{ item.goodsName }}</p>
-              <span v-if="item.spec" class="item-spec">{{ item.spec }}</span>
+              <span v-if="item.goodsSpec" class="item-spec">{{ item.goodsSpec }}</span>
             </div>
             <div class="item-right">
-              <span>&yen;{{ item.price }}</span>
+              <span>&yen;{{ item.goodsPrice }}</span>
               <span class="item-qty">×{{ item.quantity }}</span>
             </div>
           </div>

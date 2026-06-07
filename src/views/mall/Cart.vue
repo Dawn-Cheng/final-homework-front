@@ -9,12 +9,12 @@
       <div class="cart-list">
         <div v-for="item in cartItems" :key="item.id" class="cart-item">
           <span class="check-box" :class="{ checked: item.checked === 1 }" @click="toggleItem(item)"></span>
-          <img :src="item.goodsImage" class="item-img" @click="$router.push(`/mall/goods/${item.goodsId}`)" />
+          <img :src="item.goodsCover" class="item-img" @click="$router.push(`/mall/goods/${item.goodsId}`)" />
           <div class="item-info">
             <p class="item-name" @click="$router.push(`/mall/goods/${item.goodsId}`)">{{ item.goodsName }}</p>
             <p class="item-spec" v-if="item.spec">{{ item.spec }}</p>
             <div class="item-bottom">
-              <span class="item-price">&yen;{{ item.price }}</span>
+              <span class="item-price">&yen;{{ item.goodsPrice }}</span>
               <div class="qty-control">
                 <button @click="decrease(item)">-</button>
                 <span>{{ item.quantity }}</span>
@@ -70,7 +70,7 @@ const submitting = ref(false)
 const checkedItems = computed(() => cartItems.value.filter((i) => i.checked === 1))
 const checkedCount = computed(() => checkedItems.value.length)
 const allChecked = computed(() => cartItems.value.length > 0 && cartItems.value.every((i) => i.checked === 1))
-const totalPrice = computed(() => checkedItems.value.reduce((s, i) => s + i.price * i.quantity, 0).toFixed(2))
+const totalPrice = computed(() => checkedItems.value.reduce((s, i) => s + i.goodsPrice * i.quantity, 0).toFixed(2))
 
 async function fetchCart() {
   try { const res = await getCartList(); cartItems.value = res.data || [] } catch { cartItems.value = [] }

@@ -10,7 +10,8 @@
     <!-- 已登录 -->
     <template v-if="isLoggedIn && userInfo">
       <div class="user-header">
-        <img :src="userInfo.avatar" class="avatar" @error="onAvatarError" />
+        <div v-if="imgError" class="avatar-text">{{ (userInfo.username || userInfo.realName || '用')?.charAt(0) }}</div>
+        <img v-else :src="userInfo.avatar" class="avatar" @error="imgError = true" />
         <div class="user-text">
           <p class="user-name">{{ userInfo.realName || userInfo.username }}</p>
           <p class="user-phone">{{ userInfo.phone || '未绑定手机号' }}</p>
@@ -46,6 +47,8 @@ import { useUserStore } from '@/stores/user'
 import { getUserInfo } from '@/api/user'
 import { showToast } from '@/utils'
 
+const imgError = ref(false)
+
 const router = useRouter()
 const { isLoggedIn, userInfo, logout, setUserInfo } = useUserStore()
 
@@ -54,10 +57,6 @@ if (isLoggedIn.value && !userInfo.value) {
   getUserInfo()
     .then((res) => setUserInfo(res.data))
     .catch(() => {})
-}
-
-function onAvatarError(e) {
-  e.target.style.display = 'none'
 }
 
 function handleLogout() {
@@ -115,6 +114,20 @@ function handleLogout() {
   font-size: var(--font-xl);
   font-weight: 600;
   margin-bottom: 4px;
+}
+.avatar-text {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.4);
+  background: rgba(255, 255, 255, 0.25);
+  color: #fff;
+  font-size: 24px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
 }
 .user-phone {
   font-size: var(--font-sm);

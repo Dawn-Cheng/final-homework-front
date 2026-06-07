@@ -24,7 +24,7 @@
             <td class="col-no">{{ o.orderNo }}</td>
             <td>{{ o.userId }}</td>
             <td class="col-price">&yen;{{ o.totalAmount.toFixed(2) }}</td>
-            <td><span :class="statusClass(o.status)">{{ o.statusText }}</span></td>
+            <td><span :class="statusClass(o.status)">{{ statusMap[o.status] || '未知' }}</span></td>
             <td>{{ formatTime(o.createdAt) }}</td>
             <td class="col-action">
               <button class="btn-edit" @click="openDetail(o)">详情</button>
@@ -58,7 +58,7 @@
           </div>
           <div class="detail-row">
             <span class="detail-label">状态</span>
-            <span :class="statusClass(detail.status)">{{ detail.statusText }}</span>
+            <span :class="statusClass(detail.status)">{{ statusMap[detail.status] || '未知' }}</span>
           </div>
           <div class="detail-row">
             <span class="detail-label">下单时间</span>
@@ -70,7 +70,7 @@
               <img v-if="item.coverImage" :src="item.coverImage" class="detail-thumb" />
               <div class="detail-item-info">
                 <span class="detail-item-name">{{ item.goodsName || '商品' }}</span>
-                <span class="detail-item-meta">x{{ item.quantity }} &yen;{{ item.price.toFixed(2) }}</span>
+                <span class="detail-item-meta">x{{ item.quantity }} &yen;{{ (item.goodsPrice ?? item.price).toFixed(2) }}</span>
               </div>
             </div>
           </div>

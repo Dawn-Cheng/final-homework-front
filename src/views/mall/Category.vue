@@ -66,10 +66,20 @@ onMounted(async () => {
 async function loadGoods() {
   try {
     const cid = activeSub.value || activeCat.value
-    const params = { categoryId: cid, pageSize: 20 }
-    if (keyword.value) params.keyword = keyword.value
-    const res = await getGoodsList(params)
-    goods.value = res.data?.list || []
+    const params = { pageSize: 20 }
+
+    // 选中父分类但未选子分类：拉全部，前端按子分类 ID 过滤
+    if (activeCat.value && !activeSub.value && subCategories.value.length) {
+      if (keyword.value) params.keyword = keyword.value
+      const res = await getGoodsList(params)
+      const childIds = subCategories.value.map(c => c.id)
+      goods.value = (res.data?.list || []).filter(g => childIds.includes(g.categoryId))
+    } else {
+      if (cid) params.categoryId = cid
+      if (keyword.value) params.keyword = keyword.value
+      const res = await getGoodsList(params)
+      goods.value = res.data?.list || []
+    }
   } catch { goods.value = [] }
 }
 

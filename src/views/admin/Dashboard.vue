@@ -32,13 +32,6 @@
       </div>
     </div>
 
-    <!-- 快捷入口 -->
-    <div class="quick-links">
-      <div class="quick-card" @click="$router.push('/admin/orders')"><span>📋</span>订单管理</div>
-      <div class="quick-card" @click="$router.push('/admin/goods')"><span>▣</span>商品管理</div>
-      <div class="quick-card" @click="$router.push('/admin/categories')"><span>▤</span>分类管理</div>
-      <div class="quick-card" @click="$router.push('/admin/banners')"><span>▥</span>轮播图管理</div>
-    </div>
   </div>
 </template>
 
@@ -160,12 +153,4 @@ onMounted(async () => {
 }
 .ai-placeholder { color: #bbb; font-size: 14px; text-align: center; padding: 20px 0; }
 
-.quick-links { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
-.quick-card {
-  background: #fff; border-radius: 8px; padding: 22px; text-align: center;
-  font-size: 15px; color: #555; cursor: pointer;
-  box-shadow: 0 1px 3px rgba(0,0,0,.06); transition: all .2s;
-}
-.quick-card span { font-size: 28px; display: block; margin-bottom: 8px; color: #1890ff; }
-.quick-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,.1); color: #1890ff; transform: translateY(-2px); }
 </style>

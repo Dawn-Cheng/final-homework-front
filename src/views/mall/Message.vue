@@ -2,13 +2,13 @@
   <div class="message-page">
     <div v-if="messages.length" class="msg-list">
       <div v-for="msg in messages" :key="msg.id" class="msg-item">
-        <img :src="msg.avatar" class="msg-avatar" @error="e => e.target.style.display = 'none'" />
+        <div class="msg-avatar">{{ msg.title?.charAt(0) || '消' }}</div>
         <div class="msg-info">
           <div class="msg-top">
             <span class="msg-title">{{ msg.title }}</span>
-            <span class="msg-time">{{ msg.lastTime }}</span>
+            <span class="msg-time">{{ formatTime(msg.createdAt) }}</span>
           </div>
-          <p class="msg-preview">{{ msg.lastMessage }}</p>
+          <p class="msg-preview">{{ msg.content }}</p>
         </div>
       </div>
     </div>
@@ -21,6 +21,7 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { getMessages } from '@/api/message'
+import { formatTime } from '@/utils'
 
 const messages = ref([])
 
@@ -50,8 +51,13 @@ onMounted(async () => {
   width: 48px;
   height: 48px;
   border-radius: 50%;
-  object-fit: cover;
-  background: #f0f0f0;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: #fff;
+  font-size: 18px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   flex-shrink: 0;
 }
 
